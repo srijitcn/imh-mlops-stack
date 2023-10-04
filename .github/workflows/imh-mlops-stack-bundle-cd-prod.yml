@@ -15,9 +15,11 @@ defaults:
     working-directory: ./imh_mlops_stack
 
 env:
-  ARM_TENANT_ID: ${{ secrets.PROD_AZURE_SP_TENANT_ID }}
-  ARM_CLIENT_ID: ${{ secrets.PROD_AZURE_SP_APPLICATION_ID }}
-  ARM_CLIENT_SECRET: ${{ secrets.PROD_AZURE_SP_CLIENT_SECRET }}
+  #ARM_TENANT_ID: ${{ secrets.PROD_AZURE_SP_TENANT_ID }}
+  #ARM_CLIENT_ID: ${{ secrets.PROD_AZURE_SP_APPLICATION_ID }}
+  #ARM_CLIENT_SECRET: ${{ secrets.PROD_AZURE_SP_CLIENT_SECRET }}
+  DATABRICKS_HOST: https://adb-8590162618558854.14.azuredatabricks.net
+  DATABRICKS_TOKEN : ${{ secrets.DB_TOKEN }}
 
 jobs:
   prod:
