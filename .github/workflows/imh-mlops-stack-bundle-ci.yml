@@ -40,7 +40,7 @@ jobs:
           #ARM_TENANT_ID: ${{ env.STAGING_ARM_TENANT_ID }}
           #ARM_CLIENT_ID: ${{ env.STAGING_ARM_CLIENT_ID }}
           #ARM_CLIENT_SECRET: ${{ env.STAGING_ARM_CLIENT_SECRET }}
-        run: |
+        run:
           databricks bundle validate -t staging --profile dbprofile > ../validate_output.txt
       - name: Create Comment with Bundle Configuration
         uses: actions/github-script@v6
