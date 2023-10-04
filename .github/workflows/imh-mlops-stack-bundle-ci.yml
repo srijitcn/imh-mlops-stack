@@ -29,7 +29,11 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - uses: databricks/setup-cli@main
+      - uses: databricks/setup-cli@main  
+      - name Create profile
+        id: create_profile
+        run:
+          databricks configure --profile "dbprofile" --host ${{DATABRICKS_HOST}} --token ${{DATABRICKS_TOKEN}}
       - name: Validate Bundle For Staging
         id: validate
         #env:
@@ -37,7 +41,7 @@ jobs:
           #ARM_CLIENT_ID: ${{ env.STAGING_ARM_CLIENT_ID }}
           #ARM_CLIENT_SECRET: ${{ env.STAGING_ARM_CLIENT_SECRET }}
         run: |
-          databricks bundle validate -t staging > ../validate_output.txt
+          databricks bundle validate -t staging --profile dbprofile > ../validate_output.txt
       - name: Create Comment with Bundle Configuration
         uses: actions/github-script@v6
         id: comment
