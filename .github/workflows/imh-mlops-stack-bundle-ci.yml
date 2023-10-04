@@ -12,12 +12,14 @@ defaults:
     working-directory: ./imh_mlops_stack/
 
 env:
-  STAGING_ARM_TENANT_ID: ${{ secrets.STAGING_AZURE_SP_TENANT_ID }}
-  STAGING_ARM_CLIENT_ID: ${{ secrets.STAGING_AZURE_SP_APPLICATION_ID }}
-  STAGING_ARM_CLIENT_SECRET: ${{ secrets.STAGING_AZURE_SP_CLIENT_SECRET }}
-  PROD_ARM_TENANT_ID: ${{ secrets.PROD_AZURE_SP_TENANT_ID }}
-  PROD_ARM_CLIENT_ID: ${{ secrets.PROD_AZURE_SP_APPLICATION_ID }}
-  PROD_ARM_CLIENT_SECRET: ${{ secrets.PROD_AZURE_SP_CLIENT_SECRET }}
+  #STAGING_ARM_TENANT_ID: ${{ secrets.STAGING_AZURE_SP_TENANT_ID }}
+  #STAGING_ARM_CLIENT_ID: ${{ secrets.STAGING_AZURE_SP_APPLICATION_ID }}
+  #STAGING_ARM_CLIENT_SECRET: ${{ secrets.STAGING_AZURE_SP_CLIENT_SECRET }}
+  #PROD_ARM_TENANT_ID: ${{ secrets.PROD_AZURE_SP_TENANT_ID }}
+  #PROD_ARM_CLIENT_ID: ${{ secrets.PROD_AZURE_SP_APPLICATION_ID }}
+  #PROD_ARM_CLIENT_SECRET: ${{ secrets.PROD_AZURE_SP_CLIENT_SECRET }}
+  DATABRICKS_HOST: https://adb-8590162618558854.14.azuredatabricks.net
+  DATABRICKS_TOKEN : ${{ secrets.DB_TOKEN }}
 
 jobs:
   staging:
@@ -27,15 +29,19 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - uses: databricks/setup-cli@main
+      - uses: databricks/setup-cli@main        
+      - name: Create profile
+        id: create_profile
+        run:
+          databricks configure --profile "dbprofile" --host ${{env.DATABRICKS_HOST}} --token ${{env.DATABRICKS_TOKEN}}
       - name: Validate Bundle For Staging
         id: validate
-        env:
-          ARM_TENANT_ID: ${{ env.STAGING_ARM_TENANT_ID }}
-          ARM_CLIENT_ID: ${{ env.STAGING_ARM_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ env.STAGING_ARM_CLIENT_SECRET }}
-        run: |
-          databricks bundle validate -t staging > ../validate_output.txt
+        #env:
+          #ARM_TENANT_ID: ${{ env.STAGING_ARM_TENANT_ID }}
+          #ARM_CLIENT_ID: ${{ env.STAGING_ARM_CLIENT_ID }}
+          #ARM_CLIENT_SECRET: ${{ env.STAGING_ARM_CLIENT_SECRET }}
+        run:
+          databricks bundle validate -t staging --profile dbprofile > ../validate_output.txt
       - name: Create Comment with Bundle Configuration
         uses: actions/github-script@v6
         id: comment
@@ -70,10 +76,10 @@ jobs:
       - uses: databricks/setup-cli@main
       - name: Validate Bundle For Prod
         id: validate
-        env:
-          ARM_TENANT_ID: ${{ env.PROD_ARM_TENANT_ID }}
-          ARM_CLIENT_ID: ${{ env.PROD_ARM_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ env.PROD_ARM_CLIENT_SECRET }}
+        #env:
+          #ARM_TENANT_ID: ${{ env.PROD_ARM_TENANT_ID }}
+          #ARM_CLIENT_ID: ${{ env.PROD_ARM_CLIENT_ID }}
+          #ARM_CLIENT_SECRET: ${{ env.PROD_ARM_CLIENT_SECRET }}
         run: |
           databricks bundle validate -t prod > ../validate_output.txt
       - name: Create Comment with Bundle Configuration
