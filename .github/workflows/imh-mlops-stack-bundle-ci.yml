@@ -33,7 +33,7 @@ jobs:
       - name: Create profile
         id: create_profile
         run:
-          databricks configure --profile "dbprofile" --host ${{DATABRICKS_HOST}} --token ${{DATABRICKS_TOKEN}}
+          databricks configure --profile "dbprofile" --host ${{env.DATABRICKS_HOST}} --token ${{env.DATABRICKS_TOKEN}}
       - name: Validate Bundle For Staging
         id: validate
         #env:
